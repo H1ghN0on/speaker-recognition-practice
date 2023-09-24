@@ -1,0 +1,3 @@
+[submodule "sr_labs_book"]
+	path = sr_labs_book
+	url = https://github.com/itmo-mbss-lab/sr_labs_book
