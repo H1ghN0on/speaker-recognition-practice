@@ -12,7 +12,10 @@ from skimage.morphology import opening, closing
 from torchaudio.transforms import Resample
 from multiprocessing import Pool
 import torchaudio
-from utils import split_meta_line, preemphasis, make_oscillogram
+
+from graphs import make_oscillogram, make_frc, make_mfcc
+from utils import split_meta_line, preemphasis, framing, power_spectrum, compute_fbank_filters, \
+    compute_fbanks_features, compute_mfcc
 
 
 lab1_directory = "../sr_labs_book/lab1"
@@ -39,5 +42,13 @@ if __name__ ==  '__main__':
     signal = signal[0:int(3.5 * sample_rate)] # keep the first 3.5 s
     emphasized_signal = preemphasis(signal) # emphasized signal
 
-    make_oscillogram(signal, emphasized_signal, sample_rate)
+    #make_oscillogram(signal, emphasized_signal, sample_rate)
+
+    frames = framing(emphasized_signal)
+    pow_frames = power_spectrum(frames) 
+    print(pow_frames)
+    fbank = compute_fbank_filters(nfilt=40, sample_rate=16000, NFFT=512)
+    fbanks_feature = compute_fbanks_features(pow_frames, fbank)
+    #make_frc(fbank)
+    make_mfcc(fbanks_feature, [])
     
