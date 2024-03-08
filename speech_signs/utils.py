@@ -139,3 +139,32 @@ def compute_mfcc(filter_banks_features, num_ceps=20):
     mfcc = scipy.fft.dct(filter_banks_features, type=2, axis=1, norm='ortho')[:, 1 : (num_ceps + 1)] # Keep 2-13
 
     return mfcc
+
+
+def mvn_floating(features, LC, RC, unbiased=False):
+    # Here you need to do mean variance normalization of the input features
+    
+    """
+    :param features: features matrix [nframes x nfeats]
+    :param LC: the number of frames to the left defining the floating
+    :param RC: the number of frames to the right defining the floating
+    :param unbiased: biased or unbiased estimation of normalising sigma
+    :return: normalised_features: normalised features matrix [nframes x nfeats]
+    """
+    
+    nframes, dim = features.shape
+    LC = min(LC, nframes - 1)
+    RC = min(RC, nframes - 1)
+    n = (np.r_[np.arange(RC + 1, nframes), np.ones(RC + 1) * nframes] - np.r_[np.zeros(LC), np.arange(nframes - LC)])[:,
+        np.newaxis]
+    f = np.cumsum(features, 0)
+    s = np.cumsum(features ** 2, 0)
+    f = (np.r_[f[RC:], np.repeat(f[[-1]], RC, axis=0)] - np.r_[np.zeros((LC + 1, dim)), f[:-LC - 1]]) / n
+    s = (np.r_[s[RC:], np.repeat(s[[-1]], RC, axis=0)] - np.r_[np.zeros((LC + 1, dim)), s[:-LC - 1]]
+         ) / (n - 1 if unbiased else n) - f ** 2 * (n / (n - 1) if unbiased else 1)
+    
+    normalised_features = (features - f) / s
+
+    normalised_features[s == 0] = 0
+
+    return normalised_features

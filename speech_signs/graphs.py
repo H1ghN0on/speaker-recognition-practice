@@ -55,3 +55,21 @@ def make_mfcc(filter_banks_features, mfcc):
     plot_b.set_ylabel('Coefficient bins')
     plot_b.title.set_text('MFCCs')
     plt.show()
+
+def make_normalized_mfcc(filter_banks_features_mvn, mfcc_mvn):
+    fig = plt.figure(figsize=(15, 5))
+    plt.subplots_adjust(wspace=0, hspace=0.5)
+    plot_b = plt.subplot(211)
+    im_b = plot_b.imshow(filter_banks_features_mvn.T,
+    origin='lower')
+    plot_b.set_xlabel('Time bins')
+    plot_b.set_ylabel('Frequency band bins')
+    plot_b.title.set_text('Normalized FBank log energies')
+    15
+    plot_с = plt.subplot(212)
+    im_c = plot_с.imshow(mfcc_mvn.T, origin='lower')
+    plt.colorbar(im_c)
+    plot_с.set_xlabel('Time bins')
+    plot_с.set_ylabel('Coefficient bins')
+    plot_с.title.set_text('Normalized MFCCs')
+    plt.show()

@@ -13,9 +13,9 @@ from torchaudio.transforms import Resample
 from multiprocessing import Pool
 import torchaudio
 
-from graphs import make_oscillogram, make_frc, make_mfcc
+from graphs import make_oscillogram, make_frc, make_mfcc, make_normalized_mfcc
 from utils import split_meta_line, preemphasis, framing, power_spectrum, compute_fbank_filters, \
-    compute_fbanks_features, compute_mfcc
+    compute_fbanks_features, compute_mfcc, mvn_floating
 
 lab1_directory = "../sr_labs_book/lab1"
 save_directory = "./data"
@@ -56,6 +56,10 @@ def main():
     fbanks_feature = compute_fbanks_features(pow_frames, fbanks)
     mfcc = compute_mfcc(fbanks_feature, num_ceps=20)
     make_mfcc(fbanks_feature, mfcc)
+
+    filter_banks_features_mvn = mvn_floating(fbanks_feature, 150, 150)
+    mfcc_mvn = mvn_floating(mfcc, 150, 150)
+    make_normalized_mfcc(filter_banks_features_mvn, mfcc_mvn)
 
 if __name__ ==  '__main__':
     main()
