@@ -1,7 +1,6 @@
 import os
 import sys
 sys.path.append(os.path.realpath('..'))
-from sr_labs_book.common import download_dataset, extract_dataset
 from math import sqrt, pi
 from scipy.fftpack import dct
 import numpy as np
@@ -16,15 +15,6 @@ import torchaudio
 from graphs import make_oscillogram, make_frc, make_mfcc, make_normalized_mfcc, make_first_component
 from utils import split_meta_line, preemphasis, framing, power_spectrum, compute_fbank_filters, \
     compute_fbanks_features, compute_mfcc, mvn_floating
-
-lab1_directory = "../sr_labs_book/lab1"
-save_directory = "./data"
-
-# Вынести в глобальные utils
-# with open(f'{lab1_directory}/../data/lists/datasets.txt', 'r') as f:
-#     lines = f.readlines()
-# download_dataset(lines, user='voxceleb1902', password = 'nx0bl2v2', save_path = save_directory)
-# extract_dataset(save_path=f'{save_directory}/voxceleb1_test', fname=f'{lab1_directory}/../data/vox1_test_wav.zip')
 
 
 def load_signal(path_to_wav):
@@ -53,7 +43,8 @@ def compute_feats(signal, sample_rate, fbanks, with_graphs = False):
     return filter_banks_features, mfcc
 
 def main():
-
+    lab1_directory = "../sr_labs_book/lab1"
+    
     path_to_meta = f'{lab1_directory}/metadata/meta.txt'
     p = Pool(1)
     with open(path_to_meta, 'r') as f:
