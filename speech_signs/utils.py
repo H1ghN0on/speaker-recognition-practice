@@ -74,7 +74,7 @@ def power_spectrum(frames, NFFT=512):
 
     mag_frames = np.absolute(np.fft.rfft(frames, NFFT))  # Magnitude of the FFT
 
-    pow_frames = ((1.0 / NFFT) * ((mag_frames) ** 2))
+    pow_frames = ((1.0 / NFFT) * np.power(mag_frames, 2))
 
     return pow_frames
 
@@ -97,7 +97,7 @@ def compute_fbank_filters(nfilt=40, sample_rate=16000, NFFT=512):
 
     mel_points = np.linspace(low_freq_mel, high_freq_mel, nfilt + 2) # equally spaced in mel scale
 
-    hz_points = 700 * (pow(10, mel_points / 2595) - 1)
+    hz_points = 700 * (10 ** (mel_points / 2595) - 1)
     
     bin = np.floor((NFFT + 1) * hz_points / sample_rate)
 
@@ -151,19 +151,20 @@ def mvn_floating(features, LC, RC, unbiased=False):
     :param unbiased: biased or unbiased estimation of normalising sigma
     :return: normalised_features: normalised features matrix [nframes x nfeats]
     """
-    
+
     nframes, dim = features.shape
     LC = min(LC, nframes - 1)
     RC = min(RC, nframes - 1)
     n = (np.r_[np.arange(RC + 1, nframes), np.ones(RC + 1) * nframes] - np.r_[np.zeros(LC), np.arange(nframes - LC)])[:,
         np.newaxis]
+
     f = np.cumsum(features, 0)
     s = np.cumsum(features ** 2, 0)
     f = (np.r_[f[RC:], np.repeat(f[[-1]], RC, axis=0)] - np.r_[np.zeros((LC + 1, dim)), f[:-LC - 1]]) / n
     s = (np.r_[s[RC:], np.repeat(s[[-1]], RC, axis=0)] - np.r_[np.zeros((LC + 1, dim)), s[:-LC - 1]]
          ) / (n - 1 if unbiased else n) - f ** 2 * (n / (n - 1) if unbiased else 1)
-    
-    normalised_features = (features - f) / s
+
+    normalised_features = (features - f) / np.sqrt(s)
 
     normalised_features[s == 0] = 0
 

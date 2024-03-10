@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+import math
 
 def make_oscillogram(signal, emphasized_signal, sample_rate):
     """
@@ -72,4 +73,16 @@ def make_normalized_mfcc(filter_banks_features_mvn, mfcc_mvn):
     plot_с.set_xlabel('Time bins')
     plot_с.set_ylabel('Coefficient bins')
     plot_с.title.set_text('Normalized MFCCs')
+    plt.show()
+
+def make_first_component(coeff1_male, coeff1_female):
+    min_coeff1 = min(coeff1_male.min(), coeff1_female.min())
+    max_coeff1 = min(coeff1_male.max(), coeff1_female.max())
+
+    plt.hist(coeff1_male, int(math.sqrt(len(coeff1_male))), histtype='step', color='green', range=(min_coeff1, max_coeff1), density=1)
+    plt.hist(coeff1_female, int(math.sqrt(len(coeff1_female))), histtype='step', color='red', range=(min_coeff1, max_coeff1), density=1)
+    plt.xlabel('MFBs, 1st component'); 
+    plt.ylabel('Histogram value')
+    plt.title('Normalized histograms'); 
+    plt.grid(); 
     plt.show()
