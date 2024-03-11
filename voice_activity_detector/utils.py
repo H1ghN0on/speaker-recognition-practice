@@ -31,12 +31,14 @@ def load_vad_markup(path_to_rttm, signal, sample_rate):
 
 def framing(signal, window=320, shift=160):
     # Function to create frames from signal
-    
+
     shape   = (int((signal.shape[0] - window)/shift + 1), window)
-    frames  = np.zeros().astype('float32')
+    frames  = np.zeros(shape).astype('float32')
 
     ###########################################################
     # Here is your code
+
+    frames = np.array([signal[i:i+window] for i in range(0, len(signal) - window + 1, shift)])
     
     ###########################################################
     
@@ -49,9 +51,11 @@ def frame_energy(frames):
 
     ###########################################################
     # Here is your code
-    
+
+    E = [np.sum(np.abs(frame) ** 2) for frame in frames]
+
     ###########################################################
-    
+
     return E
 
 def norm_energy(E):
@@ -61,7 +65,13 @@ def norm_energy(E):
 
     ###########################################################
     # Here is your code
-    
+
+    for sample in E:
+        mean_energy = np.mean(sample)
+        std_energy = np.sqrt(np.var(sample))
+
+    E_norm = (E - mean_energy) / std_energy
+
     ###########################################################
     
     return E_norm
