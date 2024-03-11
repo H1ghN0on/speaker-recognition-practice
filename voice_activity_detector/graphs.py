@@ -20,3 +20,11 @@ def make_frames_energy(E_norm):
     plt.title('Histogram of frame energies')
     plt.grid()
     plt.show()
+
+def make_frames_approximate(E_norm, GMM_pdf):
+    plt.plot(E_norm, GMM_pdf, color='green')
+    plt.xlabel('$e_{norm}$'); 
+    plt.ylabel('$W(e_{norm})$')
+    plt.title('PDF for frame energies'); 
+    plt.grid(); 
+    plt.show()

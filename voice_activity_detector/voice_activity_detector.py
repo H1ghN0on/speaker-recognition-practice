@@ -2,8 +2,8 @@ import os
 import torchaudio
 import numpy as np
 
-from utils import load_vad_markup, framing, frame_energy, norm_energy
-from graphs import make_signal_with_rttm, make_frames_energy
+from utils import load_vad_markup, framing, frame_energy, norm_energy, gmm_train
+from graphs import make_signal_with_rttm, make_frames_energy, make_frames_approximate
 
 
 def main():
@@ -37,11 +37,16 @@ def main():
 
     make_frames_energy(E_norm)
 
-    # # Gaussian probability density function (PDF)
-    # gauss_pdf = lambda value, m, sigma: 1/((abs(sigma) + 1e-10)*np.sqrt(2*np.pi))*np.exp(-(value - m)**2/(2*(abs(sigma) + 1e-10)**2))
+    # Gaussian probability density function (PDF)
+    gauss_pdf = lambda value, m, sigma: 1/((abs(sigma) + 1e-10)*np.sqrt(2*np.pi))*np.exp(-(value - m)**2/(2*(abs(sigma) + 1e-10)**2))
 
-    # w, m, sigma = gmm_train(E_norm, gauss_pdf, n_realignment=10)
+    w, m, sigma = gmm_train(E_norm, gauss_pdf, n_realignment=10)
 
+    GMM_pdf = np.zeros(len(E_norm))
+    for j in range(len(m)):
+        GMM_pdf = GMM_pdf + gauss_pdf(sorted(E_norm), m[j], sigma[j])
+
+    make_frames_approximate(sorted(E_norm), GMM_pdf)
 
 if __name__ ==  '__main__':
     main()

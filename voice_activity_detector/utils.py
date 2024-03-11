@@ -66,9 +66,9 @@ def norm_energy(E):
     ###########################################################
     # Here is your code
 
-    for sample in E:
-        mean_energy = np.mean(sample)
-        std_energy = np.sqrt(np.var(sample))
+    mean_energy = np.mean(E)
+    std_energy = np.sqrt(np.var(E))
+
 
     E_norm = (E - mean_energy) / std_energy
 
@@ -85,20 +85,44 @@ def gmm_train(E, gauss_pdf, n_realignment):
     sigma = np.array([ 1.00, 1.00, 1.00])
 
     g = np.zeros([len(E), len(w)])
+
+
     for n in range(n_realignment):
 
         # E-step
         ###########################################################
         # Here is your code
+        
+        for i in range(len(E)):
+            denominator = np.sum(w * gauss_pdf(E[i], m, sigma))
+            for j in range(len(w)):
+                nominator = w[j] * gauss_pdf(E[i], m[j], sigma[j])
+                g[i][j] =  nominator / denominator
 
         ###########################################################
 
         # M-step
         ###########################################################
         # Here is your code
+                
+        for j in range(3):
+            sum_for_wj = 0
+            sum_for_mj = 0
+            sum_for_sigmaj = 0
+
+            for i in range(len(E)):
+                sum_for_wj += g[i][j]
+                sum_for_mj += g[i][j] * E[i]
+
+            w[j] = sum_for_wj / len(E)
+            m[j] = sum_for_mj / (len(E) * w[j])
+
+            for i in range(len(E)):
+                sum_for_sigmaj += g[i][j] * ((E[i] - m[j]) ** 2)
+
+            sigma[j] = np.sqrt(sum_for_sigmaj / (len(E) * w[j]))
 
         ##########################################################
-        pass
 
     return w, m, sigma
 
