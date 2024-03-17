@@ -80,19 +80,23 @@ def gmm_train(E, gauss_pdf, n_realignment):
     # Function to train parameters of gaussian mixture model
     
     # Initialization gaussian mixture models
-    w     = np.array([ 0.33, 0.33, 0.33])
-    m     = np.array([-1.00, 0.00, 1.00])
-    sigma = np.array([ 1.00, 1.00, 1.00])
+    w     = np.array([ 0.33, 0.33, 0.33]) # belonging probability
+    m     = np.array([-1.00, 0.00, 1.00]) # mean
+    sigma = np.array([ 1.00, 1.00, 1.00]) # deviation
 
-    g = np.zeros([len(E), len(w)])
-
+    g = np.zeros([len(E), len(w)]) 
+    # [ first energy:  [prob1, prob2, prob3], 
+    #   second energy: [prob1, prob2, prob3],
+    #   third energy:  [prob1, prob2, prob3], ... ]
 
     for n in range(n_realignment):
 
-        # E-step
+        # EXPECTATION-step
         ###########################################################
         # Here is your code
         
+        # calculating the hidden layer, probability of belonging the value to cluster
+
         for i in range(len(E)):
             denominator = np.sum(w * gauss_pdf(E[i], m, sigma))
             for j in range(len(w)):
@@ -101,7 +105,7 @@ def gmm_train(E, gauss_pdf, n_realignment):
 
         ###########################################################
 
-        # M-step
+        # MAXIMISATION-step
         ###########################################################
         # Here is your code
                 
@@ -133,6 +137,10 @@ def eval_frame_post_prob(E, gauss_pdf, w, m, sigma):
 
     ###########################################################
     # Here is your code
+
+    for i in range(len(E)):
+        denominator_sum = np.sum(w * gauss_pdf(E[i], m, sigma))
+        g0[i] = w[0] * gauss_pdf(E[i], m[0], sigma[0]) / denominator_sum
 
     ###########################################################
             
