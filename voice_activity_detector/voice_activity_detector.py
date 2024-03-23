@@ -65,7 +65,6 @@ def main():
     signal, sample_rate = load_signal(path_to_wav)
     vad_markup_ideal = load_vad_markup(path_to_rttm, signal, sample_rate)
     
-
     window = 320 # window size in samples
     shift = 160 # window shift in samples
 
