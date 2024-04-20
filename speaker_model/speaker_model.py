@@ -3,6 +3,9 @@ import os
 
 from utils import *
 
+os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "max_split_size_mb:50"
+os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "expandable_segments:True"
+
 # Select hyperparameters
 
 # Acoustic features
