@@ -33,15 +33,15 @@ num_workers_train = 5                                    # number of workers to 
 shuffle           = True                                 # shuffling of training examples
 
 # Validation dataloader
-max_frames_val    = 1000                                 # number of frame to validate
+max_frames_val    = 200                                 # number of frame to validate
 val_path          = '../data/voxceleb1_dev/wav'          # path to val wav files
-batch_size_val    = 128                                   # batch size to validate
+batch_size_val    = 32                                   # batch size to validate
 num_workers_val   = 5                                    # number of workers to validate
 
 # Test dataloader
-max_frames_test   = 1000                                 # number of frame to test
+max_frames_test   = 200                                 # number of frame to test
 test_path         = '../data/voxceleb1_dev/wav'          # path to val wav files
-batch_size_test   = 128                                   # batch size to test
+batch_size_test   = 32                                   # batch size to test
 num_workers_test  = 5                                    # number of workers to test
 
 # Optimizer
@@ -89,6 +89,8 @@ def separate_train_data():
     return train_list, val_list, test_list, len(set(num_train_spk))
 
 def init_model_and_helpers(train_list, val_list, num_train_spk):
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
     model = ResNet(
         BasicBlock, \
         layers=layers, \
@@ -104,7 +106,7 @@ def init_model_and_helpers(train_list, val_list, num_train_spk):
         nClasses=num_train_spk, \
         margin=margin)
     
-    main_model = MainModel(model, trainfunc).cuda()
+    main_model = MainModel(model, trainfunc).to(device)
 
     train_dataset = train_dataset_loader(
         train_list=train_list, \

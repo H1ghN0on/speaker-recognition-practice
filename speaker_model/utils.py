@@ -276,12 +276,10 @@ def train_network(train_loader, main_model, optimizer, scheduler, num_epoch, ver
     index   = 0
 
     for data, data_label in train_loader:
-
         data = data.transpose(1, 0)
         
         ###########################################################
         # Here is your code
-
         index += 1
         counter += 1
 
@@ -295,8 +293,6 @@ def train_network(train_loader, main_model, optimizer, scheduler, num_epoch, ver
 
         loss += nloss.item()
         top1 += prec1.item()
-
-        torch.cuda.empty_cache()
 
         ###########################################################
     
